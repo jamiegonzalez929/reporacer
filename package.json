@@ -1,0 +1,33 @@
+{
+  "name": "repo-velocity",
+  "version": "0.1.0",
+  "description": "Engineering velocity dashboard for public GitHub repositories",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "eslint": "^8.57.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "date-fns": "^3.0.0"
+  },
+  "keywords": [
+    "github",
+    "metrics",
+    "engineering",
+    "velocity",
+    "dashboard",
+    "open-source"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/repo-velocity"
+  }
+}
