@@ -1,5 +1,5 @@
 /**
- * Dashboard DOM renderer
+ * Dashboard DOM renderer - Enhanced for multi-repo comparison
  */
 
 import { fmtNumber } from '../metrics/score.js'
@@ -27,6 +27,236 @@ export function renderDashboard(data) {
   renderPRHealth(data.prs)
   renderReleases(data.releases)
   renderHeatmap(data.heatmap)
+}
+
+/**
+ * Render velocity score cards for comparison view
+ */
+export function renderVelocityCards(data, repoKeys) {
+  const container = document.getElementById('velocityCards')
+  
+  const sorted = repoKeys
+    .filter(k => data[k] && !data[k].error)
+    .sort((a, b) => (data[b].velocity?.score || 0) - (data[a].velocity?.score || 0))
+  
+  container.innerHTML = sorted.map((key, index) => {
+    const d = data[key]
+    const v = d.velocity
+    const grade = v.grade?.cls || 'c'
+    const rank = index + 1
+    
+    const dimensions = v.dimensions || {}
+    const dimHTML = Object.entries(dimensions).slice(0, 4).map(([name, value]) => `
+      <div class="velocity-dimension">
+        <span>${name}</span>
+        <div class="velocity-dimension-bar">
+          <div class="velocity-dimension-fill" style="width: ${value}%"></div>
+        </div>
+        <span>${value}</span>
+      </div>
+    `).join('')
+    
+    return `
+      <div class="velocity-card">
+        <div class="velocity-card-header">
+          <div class="velocity-card-repo">
+            <img class="velocity-card-avatar" src="${d.repo.owner.avatar_url}" alt="${d.repo.owner.login}" />
+            <span class="velocity-card-name">${key}</span>
+          </div>
+          <span class="velocity-card-rank">#${rank}</span>
+        </div>
+        <div class="velocity-card-score">
+          <span class="velocity-card-number">${v.score}</span>
+          <span class="velocity-card-grade ${grade}">${v.grade?.label || 'N/A'}</span>
+        </div>
+        <div class="velocity-card-label">Velocity Score</div>
+        <div class="velocity-card-dimensions">
+          ${dimHTML}
+        </div>
+      </div>
+    `
+  }).join('')
+}
+
+/**
+ * Render comparison table for multiple repos
+ */
+export function renderComparison(data, repoKeys) {
+  const section = document.getElementById('comparisonSection')
+  const table = document.getElementById('comparisonTable')
+  
+  if (repoKeys.length < 2) {
+    section.classList.add('hidden')
+    return
+  }
+  
+  section.classList.remove('hidden')
+  
+  const metrics = [
+    { key: 'score', label: 'Velocity Score', get: (d) => d.velocity?.score || '—', positive: true },
+    { key: 'commits', label: 'Commits (90d)', get: (d) => fmtNumber(d.commits?.total || 0) },
+    { key: 'avgPerWeek', label: 'Avg/Week', get: (d) => d.commits?.avgPerWeek || '—' },
+    { key: 'contributors', label: 'Contributors', get: (d) => d.commits?.uniqueContributors || '—' },
+    { key: 'prsMerged', label: 'PRs Merged', get: (d) => fmtNumber(d.prs?.merged || 0) },
+    { key: 'mergeRate', label: 'Merge Rate', get: (d) => d.prs?.mergeRate ? `${d.prs.mergeRate}%` : '—' },
+    { key: 'mergeTime', label: 'Avg Merge Time', get: (d) => formatMergeTime(d.prs?.avgMergeTimeHours) },
+    { key: 'issuesClosed', label: 'Issues Closed', get: (d) => fmtNumber(d.issues?.closed || 0) },
+    { key: 'releaseCadence', label: 'Release Cadence', get: (d) => d.releases?.avgDaysBetween ? `${d.releases.avgDaysBetween}d` : 'N/A' },
+    { key: 'busFactor', label: 'Bus Factor', get: (d) => d.leaderboard?.busFactor?.description || '—' },
+  ]
+  
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Metric</th>
+        ${repoKeys.map(k => `
+          <th>
+            <div class="repo-cell">
+              <img src="${data[k].repo.owner.avatar_url}" alt="${k}" />
+              <span>${k}</span>
+            </div>
+          </th>
+        `).join('')}
+      </tr>
+    </thead>
+    <tbody>
+      ${metrics.map(m => {
+        const values = repoKeys.map(k => {
+          const val = m.get(data[k])
+          // Determine tone based on value
+          let tone = 'metric-neutral'
+          if (m.positive) {
+            const num = parseInt(val) || 0
+            if (num >= 80) tone = 'metric-positive'
+            else if (num < 50) tone = 'metric-warning'
+          }
+          return { val, tone }
+        })
+        
+        return `
+          <tr>
+            <td>${m.label}</td>
+            ${values.map(v => `<td class="metric-cell ${v.tone}">${v.val}</td>`).join('')}
+          </tr>
+        `
+      }).join('')}
+    </tbody>
+  `
+}
+
+/**
+ * Render insights based on velocity data
+ */
+export function renderInsights(data, repoKeys) {
+  const container = document.getElementById('insightsGrid')
+  const section = document.getElementById('insightsSection')
+  
+  if (!container) return
+  
+  const insights = []
+  
+  for (const key of repoKeys) {
+    const d = data[key]
+    if (d.error || !d.velocity) continue
+    
+    const v = d.velocity
+    const repoName = key.split('/')[1]
+    
+    // High velocity insight
+    if (v.score >= 80) {
+      insights.push({
+        type: 'positive',
+        icon: '🚀',
+        title: `${repoName} is performing well`,
+        text: `With a velocity score of ${v.score}, this repo demonstrates strong engineering practices across commits, PRs, and releases.`
+      })
+    }
+    
+    // Contributor diversity
+    if (d.commits?.uniqueContributors >= 10) {
+      insights.push({
+        type: 'positive',
+        icon: '👥',
+        title: 'Strong contributor community',
+        text: `${d.commits.uniqueContributors} active contributors in the last 90 days indicates a healthy, distributed codebase.`
+      })
+    } else if (d.commits?.uniqueContributors < 3) {
+      insights.push({
+        type: 'warning',
+        icon: '⚠️',
+        title: 'Limited contributor diversity',
+        text: `Only ${d.commits?.uniqueContributors || 0} active contributors. Consider strategies to onboard more maintainers.`
+      })
+    }
+    
+    // PR merge rate
+    if (d.prs?.mergeRate >= 75) {
+      insights.push({
+        type: 'positive',
+        icon: '✅',
+        title: 'High PR merge rate',
+        text: `${d.prs.mergeRate}% of PRs get merged, indicating efficient code review processes.`
+      })
+    }
+    
+    // Release cadence
+    if (d.releases?.avgDaysBetween && d.releases.avgDaysBetween <= 14) {
+      insights.push({
+        type: 'positive',
+        icon: '📦',
+        title: 'Rapid release cycle',
+        text: `Releases every ${d.releases.avgDaysBetween} days on average. This suggests strong CI/CD and deployment practices.`
+      })
+    }
+    
+    // Bus factor
+    const busFactor = d.leaderboard?.busFactor?.value || 0
+    if (busFactor <= 2) {
+      insights.push({
+        type: 'warning',
+        icon: '🚌',
+        title: 'Low bus factor',
+        text: `Only ${busFactor} people understand the core code. Consider documenting critical systems and mentoring new contributors.`
+      })
+    }
+  }
+  
+  // Comparison insights
+  if (repoKeys.length > 1) {
+    const scores = repoKeys.map(k => ({ key: k, score: data[k].velocity?.score || 0 }))
+    scores.sort((a, b) => b.score - a.score)
+    
+    if (scores.length >= 2) {
+      const winner = scores[0].key.split('/')[1]
+      const loser = scores[scores.length - 1].key.split('/')[1]
+      const diff = scores[0].score - scores[scores.length - 1].score
+      
+      insights.push({
+        type: 'info',
+        icon: '🏆',
+        title: `${winner} leads the race`,
+        text: `${winner} scores ${diff} points higher than ${loser} in overall velocity metrics.`
+      })
+    }
+  }
+  
+  if (insights.length === 0) {
+    insights.push({
+      type: 'info',
+      icon: '💡',
+      title: 'Keep analyzing',
+      text: 'Add more repositories to discover patterns and insights about engineering velocity.'
+    })
+  }
+  
+  section.classList.remove('hidden')
+  container.innerHTML = insights.map(insight => `
+    <div class="insight-card ${insight.type}">
+      <div class="insight-icon">${insight.icon}</div>
+      <div class="insight-title">${insight.title}</div>
+      <div class="insight-text">${insight.text}</div>
+    </div>
+  `).join('')
 }
 
 // ----- Repo Header -----

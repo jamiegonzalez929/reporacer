@@ -3,60 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Engineering velocity dashboard for public GitHub repositories. Analyze commit frequency, PR throughput, issue resolution, contributor activity, and more." />
-    <title>Repo Velocity — GitHub Engineering Metrics</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+    <meta name="description" content="RepoRacer - Compare engineering velocity across GitHub repositories. Analyze commit frequency, PR throughput, issue resolution, and contributor health." />
+    <title>RepoRacer — GitHub Repo Comparison & Velocity Metrics</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
   <body>
     <div id="app">
+      <!-- Navigation -->
+      <nav class="nav-bar" id="navBar">
+        <div class="nav-inner">
+          <div class="nav-brand">
+            <span class="nav-icon">🏎️</span>
+            <span class="nav-title">RepoRacer</span>
+          </div>
+          <div class="nav-tabs">
+            <button class="nav-tab active" data-view="analyze">Analyze</button>
+            <button class="nav-tab" data-view="compare">Compare</button>
+            <button class="nav-tab" data-view="leaderboard">Leaderboard</button>
+          </div>
+          <div class="nav-actions">
+            <a href="https://github.com/jamiegonzalez929/reporacer" target="_blank" class="nav-github" aria-label="GitHub">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </nav>
+
       <!-- Hero / Search -->
       <header class="hero" id="hero">
+        <div class="hero-bg">
+          <div class="hero-gradient"></div>
+          <div class="hero-grid"></div>
+        </div>
         <div class="hero-inner">
           <div class="hero-badge">
-            <span class="badge-dot"></span>
-            Open Source · No Auth Required
+            <span class="badge-pulse"></span>
+            <span>Open Source · No Auth Required</span>
           </div>
           <h1 class="hero-title">
-            <span class="title-icon">⚡</span>
-            Repo Velocity
+            <span class="title-line">Race Your</span>
+            <span class="title-line accent">Repositories</span>
           </h1>
           <p class="hero-subtitle">
-            Instant engineering velocity metrics for any public GitHub repository.
-            Understand commit cadence, PR throughput, issue resolution, and contributor health — no token needed.
+            Compare engineering velocity across any public GitHub repositories. 
+            Analyze commits, PRs, issues, and contributors to understand what makes high-performing teams.
           </p>
 
           <form class="search-form" id="searchForm" autocomplete="off">
-            <div class="search-input-wrap">
-              <div class="search-prefix">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-                </svg>
+            <div class="search-container">
+              <div class="search-inputs" id="searchInputs">
+                <div class="search-input-wrap primary">
+                  <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                  </svg>
+                  <input
+                    type="text"
+                    id="repoInput"
+                    class="search-input"
+                    placeholder="owner/repo — e.g. vercel/next.js"
+                    aria-label="GitHub repository (owner/repo)"
+                    spellcheck="false"
+                  />
+                  <button type="button" class="add-repo-btn" id="addRepoBtn" title="Add another repo to compare">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <input
-                type="text"
-                id="repoInput"
-                class="search-input"
-                placeholder="owner/repo — e.g. vercel/next.js"
-                aria-label="GitHub repository (owner/repo)"
-                spellcheck="false"
-              />
               <button type="submit" class="search-btn" id="searchBtn">
                 <span class="btn-text">Analyze</span>
-                <span class="btn-icon">→</span>
+                <span class="btn-icon">⚡</span>
               </button>
             </div>
             <div class="search-examples">
-              Try:
+              <span class="examples-label">Try:</span>
               <button type="button" class="example-chip" data-repo="vercel/next.js">vercel/next.js</button>
               <button type="button" class="example-chip" data-repo="facebook/react">facebook/react</button>
               <button type="button" class="example-chip" data-repo="microsoft/vscode">microsoft/vscode</button>
-              <button type="button" class="example-chip" data-repo="torvalds/linux">torvalds/linux</button>
+              <button type="button" class="example-chip" data-repo="tailwindlabs/tailwindcss">tailwindlabs/tailwindcss</button>
+            </div>
+            <div class="compare-hint" id="compareHint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="17" y1="18" x2="3" y2="18"></line>
+              </svg>
+              <span>Add multiple repos to compare side-by-side</span>
             </div>
           </form>
+
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-value" id="totalReposAnalyzed">—</div>
+              <div class="hero-stat-label">Repos Analyzed</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <div class="hero-stat-value">500K+</div>
+              <div class="hero-stat-label">API Requests</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <div class="hero-stat-value">∞</div>
+              <div class="hero-stat-label">Free Forever</div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -69,7 +129,8 @@
               <circle cx="25" cy="25" r="20" fill="none" stroke-width="4" class="spinner-head"/>
             </svg>
           </div>
-          <div class="loading-title" id="loadingTitle">Fetching repository data…</div>
+          <div class="loading-title" id="loadingTitle">Analyzing repositories…</div>
+          <div class="loading-repo" id="loadingRepo">vercel/next.js</div>
           <div class="loading-steps" id="loadingSteps">
             <div class="loading-step" id="step-repo">○ Repository info</div>
             <div class="loading-step" id="step-commits">○ Commit history</div>
@@ -85,7 +146,13 @@
       <!-- Error state -->
       <div class="error-screen hidden" id="errorScreen">
         <div class="error-inner">
-          <div class="error-icon">⚠️</div>
+          <div class="error-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
           <h2 class="error-title" id="errorTitle">Something went wrong</h2>
           <p class="error-message" id="errorMessage"></p>
           <button class="btn-secondary" id="errorRetry">Try another repo</button>
@@ -99,7 +166,7 @@
           <div class="container">
             <div class="repo-header-inner">
               <div class="repo-header-left">
-                <img class="repo-avatar" id="repoAvatar" src="" alt="" />
+                <div class="repo-avatars" id="repoAvatars"></div>
                 <div>
                   <h2 class="repo-name" id="repoName"></h2>
                   <p class="repo-description" id="repoDescription"></p>
@@ -107,22 +174,22 @@
                 </div>
               </div>
               <div class="repo-header-right">
-                <div class="repo-stat">
-                  <span class="repo-stat-icon">⭐</span>
-                  <span class="repo-stat-value" id="statStars"></span>
-                </div>
-                <div class="repo-stat">
-                  <span class="repo-stat-icon">🍴</span>
-                  <span class="repo-stat-value" id="statForks"></span>
-                </div>
-                <div class="repo-stat">
-                  <span class="repo-stat-icon">👁</span>
-                  <span class="repo-stat-value" id="statWatchers"></span>
-                </div>
+                <div class="repo-stats-mini" id="repoStatsMini"></div>
                 <a class="btn-outline" id="repoLink" href="#" target="_blank" rel="noopener noreferrer">
-                  View on GitHub →
+                  View on GitHub
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
                 </a>
-                <button class="btn-ghost" id="newSearchBtn">← New search</button>
+                <button class="btn-ghost" id="newSearchBtn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  New Search
+                </button>
               </div>
             </div>
           </div>
@@ -130,27 +197,29 @@
 
         <div class="container dashboard-content">
 
-          <!-- Velocity Score Card -->
-          <section class="velocity-score-section">
-            <div class="velocity-score-card" id="velocityScoreCard">
-              <div class="velocity-score-left">
-                <div class="velocity-label">Velocity Score</div>
-                <div class="velocity-number" id="velocityScore">—</div>
-                <div class="velocity-grade" id="velocityGrade"></div>
-                <p class="velocity-description" id="velocityDescription"></p>
-              </div>
-              <div class="velocity-score-right">
-                <canvas id="velocityRadar" width="280" height="280"></canvas>
-              </div>
+          <!-- Velocity Score Cards -->
+          <section class="velocity-section">
+            <div class="velocity-cards" id="velocityCards"></div>
+          </section>
+
+          <!-- Comparison Table (shown when multiple repos) -->
+          <section class="comparison-section hidden" id="comparisonSection">
+            <div class="section-header">
+              <h3 class="section-title">Side-by-Side Comparison</h3>
+              <p class="section-subtitle">Compare velocity metrics across repositories</p>
+            </div>
+            <div class="comparison-table-wrap">
+              <table class="comparison-table" id="comparisonTable"></table>
             </div>
           </section>
 
           <!-- KPI Grid -->
           <section class="kpi-section">
-            <h3 class="section-title">Key Metrics — Last 90 Days</h3>
-            <div class="kpi-grid" id="kpiGrid">
-              <!-- populated by JS -->
+            <div class="section-header">
+              <h3 class="section-title">Key Metrics — Last 90 Days</h3>
+              <p class="section-subtitle">Core engineering velocity indicators</p>
             </div>
+            <div class="kpi-grid" id="kpiGrid"></div>
           </section>
 
           <!-- Charts Row 1 -->
@@ -158,7 +227,10 @@
             <div class="charts-row">
               <div class="chart-card">
                 <div class="chart-card-header">
-                  <h3 class="chart-title">Commit Activity</h3>
+                  <h3 class="chart-title">
+                    <span class="chart-icon">📊</span>
+                    Commit Activity
+                  </h3>
                   <span class="chart-subtitle">Weekly commit count</span>
                 </div>
                 <div class="chart-wrap">
@@ -167,7 +239,10 @@
               </div>
               <div class="chart-card">
                 <div class="chart-card-header">
-                  <h3 class="chart-title">PR Throughput</h3>
+                  <h3 class="chart-title">
+                    <span class="chart-icon">🔀</span>
+                    PR Throughput
+                  </h3>
                   <span class="chart-subtitle">Opened vs merged per week</span>
                 </div>
                 <div class="chart-wrap">
@@ -182,7 +257,10 @@
             <div class="charts-row">
               <div class="chart-card">
                 <div class="chart-card-header">
-                  <h3 class="chart-title">Issue Resolution</h3>
+                  <h3 class="chart-title">
+                    <span class="chart-icon">🐛</span>
+                    Issue Resolution
+                  </h3>
                   <span class="chart-subtitle">Opened vs closed per week</span>
                 </div>
                 <div class="chart-wrap">
@@ -191,7 +269,10 @@
               </div>
               <div class="chart-card">
                 <div class="chart-card-header">
-                  <h3 class="chart-title">Contributor Activity</h3>
+                  <h3 class="chart-title">
+                    <span class="chart-icon">👥</span>
+                    Contributor Activity
+                  </h3>
                   <span class="chart-subtitle">Unique committers per week</span>
                 </div>
                 <div class="chart-wrap">
@@ -201,13 +282,25 @@
             </div>
           </section>
 
+          <!-- Velocity Insights -->
+          <section class="insights-section" id="insightsSection">
+            <div class="section-header">
+              <h3 class="section-title">🚀 Velocity Insights</h3>
+              <p class="section-subtitle">Patterns and recommendations for improving engineering velocity</p>
+            </div>
+            <div class="insights-grid" id="insightsGrid"></div>
+          </section>
+
           <!-- Detailed Metrics -->
           <section class="detail-section">
             <div class="detail-row">
 
               <!-- Top Contributors -->
               <div class="detail-card">
-                <h3 class="detail-title">Top Contributors</h3>
+                <h3 class="detail-title">
+                  <span class="detail-icon">🏆</span>
+                  Top Contributors
+                </h3>
                 <p class="detail-subtitle">Bus factor & contribution share (last 90 days)</p>
                 <div id="contributorList" class="contributor-list"></div>
                 <div class="bus-factor-wrap" id="busFactor"></div>
@@ -215,7 +308,10 @@
 
               <!-- PR Health -->
               <div class="detail-card">
-                <h3 class="detail-title">PR Health</h3>
+                <h3 class="detail-title">
+                  <span class="detail-icon">💚</span>
+                  PR Health
+                </h3>
                 <p class="detail-subtitle">Lifecycle & merge patterns</p>
                 <div class="health-metrics" id="prHealth"></div>
               </div>
@@ -226,7 +322,10 @@
           <!-- Release / Deploy Cadence -->
           <section class="releases-section">
             <div class="detail-card wide">
-              <h3 class="detail-title">Release Cadence</h3>
+              <h3 class="detail-title">
+                <span class="detail-icon">🚀</span>
+                Release Cadence
+              </h3>
               <p class="detail-subtitle">Recent releases & deployment frequency</p>
               <div id="releaseTimeline" class="release-timeline"></div>
             </div>
@@ -235,7 +334,10 @@
           <!-- Code Activity Heatmap -->
           <section class="heatmap-section">
             <div class="detail-card wide">
-              <h3 class="detail-title">Commit Heatmap</h3>
+              <h3 class="detail-title">
+                <span class="detail-icon">🗓️</span>
+                Commit Heatmap
+              </h3>
               <p class="detail-subtitle">Activity by day of week & hour (last 90 days)</p>
               <div id="commitHeatmap" class="commit-heatmap"></div>
             </div>
@@ -243,10 +345,32 @@
 
           <!-- Footer inside dashboard -->
           <div class="dashboard-footer">
-            <p>Data via <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener">GitHub REST API</a> · Public repos only · Rate limit: 60 req/hr (unauthenticated), 5000/hr with token</p>
-            <p>Add a <code>VITE_GITHUB_TOKEN</code> env variable to increase limits. See <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub settings</a>.</p>
+            <div class="footer-links">
+              <p>Data via <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener">GitHub REST API</a> · Public repos only</p>
+              <p>Rate limit: 60 req/hr (unauthenticated), 5000/hr with token</p>
+              <p>Add a <code>VITE_GITHUB_TOKEN</code> env variable to increase limits. See <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub settings</a>.</p>
+            </div>
           </div>
 
+        </div>
+      </main>
+
+      <!-- Leaderboard View -->
+      <main class="leaderboard-view hidden" id="leaderboardView">
+        <div class="container">
+          <div class="leaderboard-header">
+            <h1 class="leaderboard-title">🏆 Velocity Leaderboard</h1>
+            <p class="leaderboard-subtitle">Top repositories by engineering velocity score</p>
+          </div>
+          <div class="leaderboard-filters">
+            <select id="leaderboardFilter" class="leaderboard-select">
+              <option value="stars">By Stars</option>
+              <option value="forks">By Forks</option>
+              <option value="commits">By Commits</option>
+              <option value="velocity">By Velocity Score</option>
+            </select>
+          </div>
+          <div class="leaderboard-list" id="leaderboardList"></div>
         </div>
       </main>
     </div>
