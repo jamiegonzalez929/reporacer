@@ -203,8 +203,18 @@ function show(screen) {
 }
 
 function showError(title, message) {
+  // Add helpful suggestions based on error type
+  let suggestion = ''
+  if (message.includes('Not Found') || message.includes('404')) {
+    suggestion = '<p style="margin-top:12px;font-size:0.85rem;color:var(--text-secondary)">💡 Check the spelling — repo names are case-sensitive (e.g., "facebook/react" not "Facebook/React")</p>'
+  } else if (message.includes('rate limit') || message.includes('403')) {
+    suggestion = '<p style="margin-top:12px;font-size:0.85rem;color:var(--text-secondary)">💡 GitHub rate limit reached. Wait an hour or <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--accent)">add a token</a> for higher limits.</p>'
+  } else if (message.includes('Network') || message.includes('fetch')) {
+    suggestion = '<p style="margin-top:12px;font-size:0.85rem;color:var(--text-secondary)">💡 Check your internet connection and try again.</p>'
+  }
+  
   errorTitle.textContent = title
-  errorMessage.textContent = message
+  errorMessage.innerHTML = message + suggestion
   show('error')
 }
 
@@ -498,3 +508,32 @@ function renderLeaderboard() {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 checkURL()
+
+// ─── Persisted Stats ─────────────────────────────────────────────────────────
+function updateTotalReposAnalyzed() {
+  try {
+    const stored = localStorage.getItem('reporacer_count') || '0'
+    const count = parseInt(stored, 10) + 1
+    localStorage.setItem('reporacer_count', count.toString())
+    
+    const el = document.getElementById('totalReposAnalyzed')
+    if (el) el.textContent = count.toLocaleString()
+  } catch (e) {
+    // localStorage not available
+  }
+}
+
+// Load initial count
+try {
+  const stored = localStorage.getItem('reporacer_count')
+  const el = document.getElementById('totalReposAnalyzed')
+  if (el && stored) el.textContent = parseInt(stored, 10).toLocaleString()
+} catch (e) {}
+
+// Update count after successful analysis
+const originalAnalyzeRepos = analyzeRepos
+analyzeRepos = async function(...args) {
+  const result = await originalAnalyzeRepos.apply(this, args)
+  updateTotalReposAnalyzed()
+  return result
+}
