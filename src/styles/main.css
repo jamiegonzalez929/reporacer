@@ -976,6 +976,94 @@ button {
 }
 
 /* ===========================
+   Velocity Radar Section
+   =========================== */
+.velocity-radar-section {
+  padding: 40px 0;
+  margin-bottom: 40px;
+}
+
+.velocity-radar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.velocity-radar-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.velocity-radar-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.velocity-radar-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.velocity-radar-chart {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ===========================
+   Comparison Radar Section
+   =========================== */
+.comparison-radar-section {
+  margin-bottom: 40px;
+}
+
+.comparison-radar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.comparison-radar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.comparison-radar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.comparison-radar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+}
+
+.comparison-radar-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.comparison-radar-score {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.comparison-radar-chart {
+  height: 250px;
+}
+
+/* ===========================
    KPI Grid
    =========================== */
 .kpi-section {

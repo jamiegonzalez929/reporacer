@@ -360,6 +360,7 @@ async function analyzeSingleRepo(owner, repo) {
 // ─── Render full dashboard with comparison ─────────────────────────────────
 function renderFullDashboard(data) {
   const repoKeys = Object.keys(data).filter(k => !data[k].error)
+  const isMultiRepo = repoKeys.length > 1
   
   // Render repo header
   if (repoKeys.length === 1) {
@@ -374,6 +375,7 @@ function renderFullDashboard(data) {
   // Render comparison table if multiple repos
   if (repoKeys.length > 1) {
     renderComparison(data, repoKeys)
+    renderComparisonRadar(data, repoKeys)
   }
   
   // Render KPIs (show first repo or combined)
@@ -392,7 +394,7 @@ function renderFullDashboard(data) {
       issueWeeks: mainData.issueWeeks,
       contributorWeeks: mainData.contributorWeeks,
       heatmap: mainData.heatmap,
-    })
+    }, isMultiRepo, data)
   }
   
   // Render insights

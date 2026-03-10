@@ -11,13 +11,14 @@ import {
   renderIssueChart,
   renderContributorChart,
   renderRadarChart,
+  renderComparisonRadar as renderSingleRadar,
   destroyAll,
 } from './charts.js'
 
 /**
  * Render the full dashboard given the aggregated data object
  */
-export function renderDashboard(data) {
+export function renderDashboard(data, isMultiRepo = false) {
   destroyAll()
   renderRepoHeader(data.repo)
   renderVelocityScore(data.velocity)
@@ -27,6 +28,15 @@ export function renderDashboard(data) {
   renderPRHealth(data.prs)
   renderReleases(data.releases)
   renderHeatmap(data.heatmap)
+  
+  // Show velocity radar for single repo
+  const radarSection = document.getElementById('velocityRadarSection')
+  if (!isMultiRepo && data.velocity?.dimensions) {
+    radarSection.classList.remove('hidden')
+    renderRadarChart('velocityRadar', data.velocity.dimensions)
+  } else {
+    radarSection.classList.add('hidden')
+  }
 }
 
 /**
@@ -142,6 +152,66 @@ export function renderComparison(data, repoKeys) {
       }).join('')}
     </tbody>
   `
+}
+
+/**
+ * Render comparison radar charts for multiple repos
+ */
+export function renderComparisonRadar(data, repoKeys) {
+  const section = document.getElementById('comparisonRadarSection')
+  const grid = document.getElementById('comparisonRadarGrid')
+  
+  if (repoKeys.length < 2) {
+    section.classList.add('hidden')
+    return
+  }
+  
+  section.classList.remove('hidden')
+  
+  // Get all dimension keys from all repos
+  const allDimensions = new Set()
+  for (const key of repoKeys) {
+    const dims = data[key]?.velocity?.dimensions || {}
+    Object.keys(dims).forEach(d => allDimensions.add(d))
+  }
+  
+  const dimensionArray = Array.from(allDimensions)
+  
+  // Create a radar chart for each repo
+  grid.innerHTML = repoKeys.map(key => {
+    const d = data[key]
+    const v = d.velocity
+    const dims = v?.dimensions || {}
+    
+    return `
+      <div class="comparison-radar-card">
+        <div class="comparison-radar-header">
+          <img class="comparison-radar-avatar" src="${d.repo.owner.avatar_url}" alt="${d.repo.owner.login}" />
+          <div>
+            <div class="comparison-radar-name">${key}</div>
+            <div class="comparison-radar-score">Velocity: ${v?.score || '—'}</div>
+          </div>
+        </div>
+        <div class="comparison-radar-chart">
+          <canvas id="radar-${key.replace(/[\/\.]/g, '-')}"></canvas>
+        </div>
+      </div>
+    `
+  }).join('')
+  
+  // Render each radar chart after DOM is updated
+  requestAnimationFrame(() => {
+    repoKeys.forEach(key => {
+      const d = data[key]
+      const dims = d?.velocity?.dimensions || {}
+      const canvasId = `radar-${key.replace(/[\/\.]/g, '-')}`
+      
+      // Map dimensions to the full list
+      const values = dimensionArray.map(dim => dims[dim] || 0)
+      
+      renderSingleRadar(canvasId, dimensionArray, values)
+    })
+  })
 }
 
 /**

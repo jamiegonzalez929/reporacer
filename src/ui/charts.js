@@ -240,6 +240,61 @@ export function renderRadarChart(canvasId, dimensions) {
 }
 
 /**
+ * Comparison radar chart (multi-repo)
+ */
+export function renderComparisonRadar(canvasId, labels, values, color = ACCENT) {
+  const canvas = document.getElementById(canvasId)
+  if (!canvas) return
+
+  const chart = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Score',
+        data: values,
+        borderColor: color,
+        backgroundColor: color.replace(')', ', 0.15)').replace('rgb', 'rgba'),
+        borderWidth: 2,
+        pointBackgroundColor: color,
+        pointRadius: 3,
+      }],
+    },
+    options: {
+      animation: { duration: 800, easing: 'easeInOutQuart' },
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: {
+            display: false,
+            stepSize: 25,
+          },
+          grid: { color: GRID },
+          angleLines: { color: GRID },
+          pointLabels: {
+            color: TEXT_SECONDARY,
+            font: { size: 10, weight: '500' },
+          },
+        },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.raw}/100`,
+          },
+        },
+      },
+    },
+  })
+  register(canvasId, chart)
+  return chart
+}
+
+/**
  * Shared base chart options
  */
 function baseOptions(yLabel = 'count') {

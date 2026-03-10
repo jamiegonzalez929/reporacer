@@ -159,6 +159,24 @@
         </div>
       </div>
 
+      <!-- Velocity Radar Chart (shown for single repos) -->
+      <div class="velocity-radar-section hidden" id="velocityRadarSection">
+        <div class="container">
+          <div class="velocity-radar-card">
+            <div class="velocity-radar-header">
+              <h3 class="velocity-radar-title">
+                <span class="chart-icon">📊</span>
+                Velocity Breakdown
+              </h3>
+              <p class="velocity-radar-subtitle">Score dimensions across different engineering metrics</p>
+            </div>
+            <div class="velocity-radar-chart">
+              <canvas id="velocityRadar"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Dashboard -->
       <main class="dashboard hidden" id="dashboard">
         <!-- Repo header -->
@@ -220,6 +238,15 @@
               <p class="section-subtitle">Core engineering velocity indicators</p>
             </div>
             <div class="kpi-grid" id="kpiGrid"></div>
+          </section>
+
+          <!-- Comparison Radar Charts (shown when multiple repos) -->
+          <section class="comparison-radar-section hidden" id="comparisonRadarSection">
+            <div class="section-header">
+              <h3 class="section-title">🔬 Velocity Comparison</h3>
+              <p class="section-subtitle">Compare velocity dimensions across repositories</p>
+            </div>
+            <div class="comparison-radar-grid" id="comparisonRadarGrid"></div>
           </section>
 
           <!-- Charts Row 1 -->
