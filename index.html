@@ -54,6 +54,55 @@
             Compare engineering velocity across any public GitHub repositories. 
             Analyze commits, PRs, issues, and contributors to understand what makes high-performing teams.
           </p>
+          
+          <div class="velocity-explainer">
+            <button type="button" class="explainer-toggle" id="explainerToggle">
+              <span class="explainer-icon">💡</span>
+              <span>What is velocity?</span>
+              <svg class="explainer-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="explainer-content hidden" id="explainerContent">
+              <div class="explainer-grid">
+                <div class="explainer-item">
+                  <span class="explainer-icon-small">📦</span>
+                  <div>
+                    <strong>Commits</strong>
+                    <p>Frequency of code submissions. Higher = active development.</p>
+                  </div>
+                </div>
+                <div class="explainer-item">
+                  <span class="explainer-icon-small">🔀</span>
+                  <div>
+                    <strong>PR Throughput</strong>
+                    <p>How fast pull requests get merged. Higher merge rate = healthy codebase.</p>
+                  </div>
+                </div>
+                <div class="explainer-item">
+                  <span class="explainer-icon-small">🐛</span>
+                  <div>
+                    <strong>Issue Resolution</strong>
+                    <p>Speed of closing issues. Faster = responsive maintenance.</p>
+                  </div>
+                </div>
+                <div class="explainer-item">
+                  <span class="explainer-icon-small">👥</span>
+                  <div>
+                    <strong>Contributors</strong>
+                    <p>Diversity of contributors. Higher bus factor = resilient project.</p>
+                  </div>
+                </div>
+                <div class="explainer-item">
+                  <span class="explainer-icon-small">🚀</span>
+                  <div>
+                    <strong>Releases</strong>
+                    <p>Cadence of releases. Regular = reliable shipping.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <form class="search-form" id="searchForm" autocomplete="off">
             <div class="search-container">
@@ -81,6 +130,7 @@
               <button type="submit" class="search-btn" id="searchBtn">
                 <span class="btn-text">Analyze</span>
                 <span class="btn-icon">⚡</span>
+                <span class="kbd-hint"><kbd>↵</kbd></span>
               </button>
             </div>
             <div class="search-examples">

@@ -122,6 +122,18 @@ document.querySelectorAll('.example-chip').forEach(chip => {
   })
 })
 
+// ─── Velocity Explainer Toggle ─────────────────────────────────────────────────
+const explainerToggle = document.getElementById('explainerToggle')
+const explainerContent = document.getElementById('explainerContent')
+
+if (explainerToggle && explainerContent) {
+  explainerToggle.addEventListener('click', () => {
+    const isExpanded = explainerToggle.getAttribute('aria-expanded') === 'true'
+    explainerToggle.setAttribute('aria-expanded', !isExpanded)
+    explainerContent.classList.toggle('hidden')
+  })
+}
+
 // ─── Search form ──────────────────────────────────────────────────────────────
 searchForm.addEventListener('submit', async (e) => {
   e.preventDefault()

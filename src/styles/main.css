@@ -485,6 +485,108 @@ button {
   background: var(--border);
 }
 
+/* Keyboard shortcut hint */
+.kbd-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* Velocity Explainer */
+.velocity-explainer {
+  margin-bottom: 32px;
+}
+
+.explainer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+
+.explainer-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.explainer-icon {
+  font-size: 1rem;
+}
+
+.explainer-chevron {
+  transition: transform var(--transition);
+}
+
+.explainer-toggle[aria-expanded="true"] .explainer-chevron {
+  transform: rotate(180deg);
+}
+
+.explainer-content {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.explainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.explainer-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+}
+
+.explainer-icon-small {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.explainer-item strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.explainer-item p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 /* ===========================
    Loading Screen
    =========================== */
@@ -504,6 +606,17 @@ button {
   width: 64px;
   height: 64px;
   margin: 0 auto 24px;
+  position: relative;
+}
+
+.loading-spinner::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0%, var(--accent) 20%, transparent 40%);
+  animation: spin-glow 1.5s linear infinite;
+  opacity: 0.5;
 }
 
 .spinner-svg {
@@ -520,6 +633,11 @@ button {
   stroke: var(--accent);
   stroke-linecap: round;
   animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes spin-glow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes rotate {
@@ -1737,6 +1855,10 @@ button {
   .hero-stat-divider {
     display: none;
   }
+  
+  .comparison-radar-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1760,6 +1882,23 @@ button {
   .search-btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .kbd-hint {
+    display: none;
+  }
+  
+  .velocity-radar-card,
+  .comparison-radar-card {
+    padding: 16px;
   }
 }
 
